@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aries Level Up - Leaderboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="nav-links">
+                <a href="index.html" class="nav-link active">Leaderboard</a>
+            </div>
+            <div class="storage-info">
+                <span class="storage-icon">DB</span>
+                <span id="storageStatus">Global Leaderboard</span>
+            </div>
+        </nav>
+
+        <header>
+            <h1>Aries Level Up</h1>
+            <p class="subtitle">Competition Leaderboard | Model Performance Tracking</p>
+        </header>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-label">Current SOTA Score</div>
+                <div class="stat-value" id="sotaScore">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Benchmark Score</div>
+                <div class="stat-value" id="benchmarkScore">0.5000</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Participants</div>
+                <div class="stat-value" id="totalParticipants">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Last Updated</div>
+                <div class="stat-value" id="lastUpdate">-</div>
+            </div>
+        </div>
+
+        <div class="leaderboard-container">
+            <table class="leaderboard">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Participant</th>
+                        <th>CV Score</th>
+                        <th>Total Points</th>
+                        <th>Last Submission</th>
+                        <th>Score Increase</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            No submissions yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
