@@ -58,6 +58,31 @@ function parseWhatsAppChat(text) {
     return scores;
 }
 
+// Parse timestamp (handles WhatsApp format)
+function parseTimestamp(timestamp) {
+    if (!timestamp) return null;
+    
+    try {
+        // Handle format: "05/12/2025, 17:50" or "05/12/2025, 17:50:00"
+        const cleanTimestamp = timestamp.replace(/[\[\]]/g, '').trim();
+        
+        // Parse DD/MM/YYYY, HH:mm format (WhatsApp format)
+        const match = cleanTimestamp.match(/(\d{1,2})\/(\d{1,2})\/(\d{4}),?\s+(\d{1,2}):(\d{2})/);
+        if (match) {
+            const [_, day, month, year, hour, minute] = match;
+            // Create date in UTC to match backend
+            const date = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hour), parseInt(minute)));
+            return date;
+        }
+        
+        // Fallback: try parsing as ISO format
+        const date = new Date(cleanTimestamp);
+        return isNaN(date.getTime()) ? null : date;
+    } catch (error) {
+        return null;
+    }
+}
+
 // Sort leaderboard by total points (primary) and CV score (secondary)
 function sortLeaderboard() {
     leaderboardData.sort((a, b) => {
@@ -150,15 +175,48 @@ function updateLeaderboardTable() {
         // Points
         const pointsCell = document.createElement('td');
         const totalPoints = participant.totalPoints || 0;
+        const currentTimeBonus = participant.currentTimeBonus || 0;
+        const cvBonus = participant.cvBonus || 0;
         const submissionCount = participant.submissionCount || 1;
-        pointsCell.innerHTML = `<span class="points-value">${totalPoints.toFixed(2)}</span><br><span class="submission-count">${submissionCount} submission${submissionCount > 1 ? 's' : ''}</span>`;
+        const displayPoints = participant.totalPointsWithBonus || totalPoints;
+        
+        let pointsHTML = `<span class="points-value">${displayPoints.toFixed(2)}</span>`;
+        if (currentTimeBonus > 0) {
+            pointsHTML += `<br><span class="time-bonus-active">+${currentTimeBonus.toFixed(2)} time bonus</span>`;
+        }
+        if (cvBonus > 0) {
+            pointsHTML += `<br><span class="cv-bonus-active">+${cvBonus.toFixed(2)} CV bonus</span>`;
+        }
+        pointsHTML += `<br><span class="submission-count">${submissionCount} submission${submissionCount > 1 ? 's' : ''}</span>`;
+        
+        pointsCell.innerHTML = pointsHTML;
         row.appendChild(pointsCell);
         
-        // Time Bonus (removed from table, kept for future use)
-        const timeBonusCell = document.createElement('td');
+        // Submission Time (shows last submission points and SOTA holding time)
+        const submissionTimeCell = document.createElement('td');
         const lastPoints = participant.lastSubmissionPoints || 0;
-        timeBonusCell.innerHTML = `<span class="last-submission">+${lastPoints.toFixed(2)}</span>`;
-        row.appendChild(timeBonusCell);
+        let submissionTimeHTML = `<span class="last-submission">+${lastPoints.toFixed(2)}</span>`;
+        
+        // Show time since last submission
+        if (participant.submittedAt || participant.timestamp) {
+            const timestamp = participant.submittedAt || participant.timestamp;
+            const submittedAt = parseTimestamp(timestamp);
+            if (submittedAt) {
+                const now = new Date();
+                const diffMs = now - submittedAt;
+                const hoursAgo = Math.floor(diffMs / (1000 * 60 * 60));
+                const minutesAgo = Math.floor((diffMs / (1000 * 60)) % 60);
+                submissionTimeHTML += `<br><span class="time-elapsed">${hoursAgo}h ${minutesAgo}m ago</span>`;
+            }
+        }
+        
+        // Show SOTA holding bonus if applicable
+        if (currentTimeBonus > 0) {
+            submissionTimeHTML += `<br><span class="sota-held">⏱️ Held SOTA</span>`;
+        }
+        
+        submissionTimeCell.innerHTML = submissionTimeHTML;
+        row.appendChild(submissionTimeCell);
         
         // Improvement
         const improvementCell = document.createElement('td');

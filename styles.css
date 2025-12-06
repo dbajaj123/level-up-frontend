@@ -315,6 +315,47 @@ header h1 {
     font-size: 0.95em;
 }
 
+.time-bonus-active {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #ffd700;
+    font-size: 0.85em;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.cv-bonus-active {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #00ff88;
+    font-size: 0.85em;
+}
+
+.sota-held {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #ffd700;
+    font-size: 0.75em;
+    opacity: 0.9;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.sota-holder {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #ffd700;
+    font-size: 0.9em;
+    text-align: center;
+    display: block;
+    background: rgba(255, 215, 0, 0.1);
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
 .time-bonus-zero {
     color: #6c757d;
     font-size: 0.9em;
